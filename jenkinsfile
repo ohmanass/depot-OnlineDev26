@@ -13,7 +13,7 @@ pipeline {
         }
         stage('install Docker'){
             steps {
-                sh 'sudo flock /var/lib/dpkg/lock-frontend --timeout 120 echo "Verrou libéré"'
+                sh 'sudo flock -w 120 /var/lib/dpkg/lock-frontend echo "Verrou libéré"'
                 sh 'sudo apt-get remove docker.io docker-compose -y || true'
                 sh 'sudo apt update'
                 sh 'sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y'
