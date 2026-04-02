@@ -1,36 +1,37 @@
 pipeline {
     agent any
-        stages {
-            stage('CleanUp de Workspace'){
-                steps {
-                    cleanWs()
-                }
+    stages {
+        stage('CleanUp de Workspace'){
+            steps {
+                cleanWs()
             }
-            stage('Cloner le GitHub'){
-                steps {
-                        git branch: 'main', url: 'https://github.com/ohmanass/depot-OnlineDev26.git'
-                    }
+        }
+        stage('Cloner le GitHub'){
+            steps {
+                git branch: 'main', url: 'https://github.com/ohmanass/depot-OnlineDev26.git'
             }
-            stage('install Docker'){
-                steps {
-                    sh 'sudo apt-get autoremove docker.io docker-compose -y'
-                    sh 'sudo apt update'
-                    sh 'sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y'
-                    sh 'sudo apt-get install docker.io -y'
-                    sh 'sudo apt update'
-                    sh 'sudo chmod 666 /var/run/docker.sock'
-                    sh 'sudo usermod -aG docker $USER'
-                    sh 'sudo systemctl restart docker.service'
-                }
+        }
+        stage('install Docker'){
+            steps {
+                sh 'sudo flock /var/lib/dpkg/lock-frontend --timeout 120 echo "Verrou libéré"'
+                sh 'sudo apt-get remove docker.io docker-compose -y || true'
+                sh 'sudo apt update'
+                sh 'sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y'
+                sh 'sudo apt-get install docker.io -y'
+                sh 'sudo apt update'
+                sh 'sudo chmod 666 /var/run/docker.sock'
+                sh 'sudo usermod -aG docker $USER'
+                sh 'sudo systemctl restart docker.service'
             }
-            stage('build image docker') {
-                steps {
-                    script {
-                        sh 'sudo docker image rm "mynginx'
-                        sh 'sudo docker build -t "mynginx" .'
-                        sh 'sudo docker image ls'                    
-                    }
+        }
+        stage('build image docker') {
+            steps {
+                script {
+                    sh 'sudo docker image rm -f mynginx || true'
+                    sh 'sudo docker build -t mynginx .'
+                    sh 'sudo docker image ls'
                 }
             }
         }
+    }
 }
