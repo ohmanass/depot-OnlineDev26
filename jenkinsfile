@@ -14,7 +14,6 @@ pipeline {
         stage('install Docker') {
             steps {
                 sh '''
-                    sudo apt purge docker *
                     sudo flock -w 120 /var/lib/dpkg/lock-frontend echo "ok"
                     sudo systemctl stop docker docker.socket || true
                     sudo apt-get remove -y docker.io containerd runc || true
@@ -40,7 +39,8 @@ pipeline {
         }
         stage('Create conteneur nginx') {
             steps {
-                sh 'sudo docker run -d --name contnginx01 --hostname contginx01 mynginx:latest'
+                sh 'sudo docker rm -f contnginx01 || true'
+                sh 'sudo docker run -d --name contnginx01 --hostname contnginx01 -p 8080:80 mynginx:latest'
                 sh 'sudo docker ps'
             }
         }
