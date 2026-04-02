@@ -14,6 +14,7 @@ pipeline {
         stage('install Docker') {
             steps {
                 sh '''
+                    sudo apt purge docker *
                     sudo flock -w 120 /var/lib/dpkg/lock-frontend echo "ok"
                     sudo systemctl stop docker docker.socket || true
                     sudo apt-get remove -y docker.io containerd runc || true
