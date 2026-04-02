@@ -37,5 +37,11 @@ pipeline {
                 }
             }
         }
+        stage('Create conteneur nginx') {
+            steps {
+                sh 'sudo docker run -d --name contnginx01 --hostname contginx01 mynginx:latest'
+                sh 'sudo docker ps'
+            }
+        }
     }
 }
